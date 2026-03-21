@@ -1,37 +1,35 @@
-# clawnet
+# 🦞 clawnet
 
 An evolving TCP client-server implementation in C.
 
 ---
 
-## About
+### ℹ️ About
 
 `clawnet` is a hands-on networking project built to learn how servers, clients, and network communication work from the
-ground up - in C.<br>
-The documentation is structured in **levels**, each representing a level of abstraction.<br>
+ground up in C.<br>
+The documentation is structured in **sections**, each representing a level of abstraction.<br>
 Starting from basic TCP communication and progresses toward:
-- 🔼 higher-level abstractions
-- 🔽 lower-level manual implementations<br>
+- ⬆️ higher-level abstractions
+- ⬇️ lower-level manual implementations<br>
 
-Each level has its own documentation covering the relevant context and how things work.<br>
-The project provides a server and a client tool you can build and run directly.
+Each **section** has its own documentation covering the relevant context and how the code works.<br>
+The project provides a `server` and a `client` tool you can build and run directly.
 
-### Levels
+### 📚 Sections 
 
-| Level | Docs |
-|-------|-------------|
-| **0** | [Blocking, single-connection TCP server and client](./docs/lvl_0.md) |
+- [🚀 **Starting point**](./docs/starting_point.md)
 
 ---
 
-## Dependencies
+## 📦 Dependencies
 - [CMake](https://cmake.org/)
 - Build system
 - C compiler
 
 ---
 
-## Build and run
+## 🔧 Build and run
 ```bash
 cmake -B build
 cmake --build build
