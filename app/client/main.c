@@ -96,7 +96,6 @@ int main(int argc, char *argv[]) {
          fprintf(stderr, "[%s] Server connection closed: %s:%d\n", argv[0], SERVER_IP, SERVER_PORT);
          exit(EXIT_FAILURE);
       }
-      printf("[%s] Request header was sent successfully\n", argv[0]);
       
       // send request body
       if(send(server_socket, request_body, request_body_length, 0) == -1) {
@@ -105,7 +104,6 @@ int main(int argc, char *argv[]) {
          fprintf(stderr, "[%s] Server connection closed: %s:%d\n", argv[0], SERVER_IP, SERVER_PORT);
          exit(EXIT_FAILURE);
       }
-      printf("[%s] Request body was sent successfully\n", argv[0]);
    }
 
    close(server_socket);
