@@ -39,14 +39,22 @@ int main(int argc, char *argv[]) {
    printf("[%s] Connected to server: %s:%d\n", argv[0], SERVER_IP, SERVER_PORT);
 
    while (1) {
-      const char request_body[] = "Hello world from client!\n";
+      // get input
+      char *request_body;
+      size_t request_body_size;
+      printf("[%s] Input: ", argv[0]);
+      size_t request_body_length = getline(&request_body, &request_body_size, stdin);
+      if (request_body_length == -1) {
+         printf("\n");
+         fprintf(stderr, "[%s] Failed to read input from user.\n", argv[0]);
+         continue;
+      }
 
       // host, 16-bit byte order → network byte order  
-      uint16_t len = strlen(request_body);
-      uint16_t request_body_length = htons(len);
+      uint16_t request_header = htons(request_body_length);
 
       // send request header
-      if(send(server_socket, &request_body_length, sizeof(request_body_length), 0) == -1) {
+      if(send(server_socket, &request_header, sizeof(request_header), 0) == -1) {
          fprintf(stderr, "[%s] Failed to send request header to server: %s:%d\n", argv[0], SERVER_IP, SERVER_PORT);
          close(server_socket);
          fprintf(stderr, "[%s] Server connection closed: %s:%d\n", argv[0], SERVER_IP, SERVER_PORT);
@@ -55,14 +63,13 @@ int main(int argc, char *argv[]) {
       printf("[%s] Request header was sent successfully\n", argv[0]);
       
       // send request body
-      if(send(server_socket, request_body, len, 0) == -1) {
+      if(send(server_socket, request_body, request_body_length, 0) == -1) {
          fprintf(stderr, "[%s] Failed to send request body to server: %s:%d\n", argv[0], SERVER_IP, SERVER_PORT);
          close(server_socket);
          fprintf(stderr, "[%s] Server connection closed: %s:%d\n", argv[0], SERVER_IP, SERVER_PORT);
          exit(EXIT_FAILURE);
       }
       printf("[%s] Request body was sent successfully\n", argv[0]);
-      break;
    }
 
    return 0;

@@ -89,13 +89,10 @@ int main(int argc, char *argv[]) {
          if (body_bytes_read == -1) {
             fprintf(stderr, "[%s] Failed to read client request body: %s:%d\n", argv[0], client_ip, client_port);
             break;
-         } else if (body_bytes_read == 0) {
-            printf("[%s] No data was found from body (%d byte)\n", argv[0], request_body_length);
-            break;
-         }
+         } else if (body_bytes_read == 0) break;
 
          request_body[request_body_length] = '\0';
-         printf("[%s] Client request (%d/%d bytes):\n%s\n", argv[0], body_bytes_read, request_body_length, request_body);
+         printf("[%s] Client request (%d bytes):\n%s\n", argv[0], body_bytes_read, request_body);
          free(request_body);
       }
       close(client_socket);
