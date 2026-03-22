@@ -1,4 +1,6 @@
+#include "client.h"
 #include <arpa/inet.h>
+#include <errno.h>
 #include <netinet/in.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -9,8 +11,39 @@
 #include <unistd.h>
 
 int main(int argc, char *argv[]) {
-   const char *SERVER_IP = "127.0.0.1";
-   const uint16_t SERVER_PORT = 3000;
+   char *ip_arg = NULL;
+   char *port_arg = NULL;
+
+   for (int i = 1; i < argc; i++) {
+      if (strcmp(argv[i], "--help") == 0) {
+         print_help(argv[0]);
+         return 0;
+      }
+      else if (strcmp(argv[i], "--ip") == 0 && i + 1 < argc) ip_arg = argv[++i];
+      else if (strcmp(argv[i], "--port") == 0 && i + 1 < argc) port_arg = argv[++i];
+      else {
+         fprintf(stderr, "[%s] Wrong usage: '%s'\n", argv[0], argv[i]);
+         fprintf(stderr, "[%s] Try '%s --help'\n", argv[0], argv[0]);
+         exit(EXIT_FAILURE);
+      }
+   }
+
+   if (ip_arg == NULL || port_arg == NULL) {
+      fprintf(stderr, "[%s] Not enough options\n", argv[0]);
+      fprintf(stderr, "[%s] Try '%s --help'\n", argv[0], argv[0]);
+      exit(EXIT_FAILURE);
+   }
+
+   char *SERVER_IP = ip_arg;
+
+   errno = 0;
+   char *end;
+   uint16_t SERVER_PORT = strtol(port_arg, &end, 10);
+   if (errno != 0 || SERVER_PORT < 1 || SERVER_PORT > 65535) {
+      fprintf(stderr, "[%s] Wrong port\n", argv[0]);
+      fprintf(stderr, "[%s] Try '%s --help'\n", argv[0], argv[0]);
+      exit(EXIT_FAILURE);
+   }
 
    // server socket
    int server_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -32,7 +65,7 @@ int main(int argc, char *argv[]) {
 
    // connect to the server
    if (connect(server_socket, (struct sockaddr*)&server_address, sizeof(server_address)) == -1) {
-      fprintf(stderr, "[%s] Failed to initiate connection to server: %s:%d\n", argv[0], SERVER_IP, SERVER_PORT);
+      fprintf(stderr, "[%s] Failed to connect to server: %s:%d\n", argv[0], SERVER_IP, SERVER_PORT);
       close(server_socket);
       exit(EXIT_FAILURE);
    }
@@ -40,15 +73,18 @@ int main(int argc, char *argv[]) {
 
    while (1) {
       // get input
-      char *request_body;
-      size_t request_body_size;
-      printf("[%s] Input: ", argv[0]);
+      char *request_body = NULL;
+      size_t request_body_size = 0;
+      printf("[%s] Input (q to quit): ", argv[0]);
       size_t request_body_length = getline(&request_body, &request_body_size, stdin);
       if (request_body_length == -1) {
          printf("\n");
          fprintf(stderr, "[%s] Failed to read input from user.\n", argv[0]);
          continue;
       }
+
+      // quit
+      if (request_body_length == 2 && request_body[0] == 'q') break;
 
       // host, 16-bit byte order → network byte order  
       uint16_t request_header = htons(request_body_length);
@@ -72,5 +108,7 @@ int main(int argc, char *argv[]) {
       printf("[%s] Request body was sent successfully\n", argv[0]);
    }
 
+   close(server_socket);
+   fprintf(stderr, "[%s] Server connection closed: %s:%d\n", argv[0], SERVER_IP, SERVER_PORT);
    return 0;
 }
