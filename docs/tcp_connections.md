@@ -1,20 +1,18 @@
 [< back](../README.md)
 
-## 🚀Starting point 
+## 🔌 TCP connections
 
 ### 🧠 Overview
 
 This section implements **low-level networking** via the
-[The Berkeley Sockets API](https://csperkins.org/teaching/2007-2008/networked-systems/lecture04.pdf).
-
-It focuses on the **TCP socket creation, binding, and connection management** at the **Transport Layer**.
-
-To keep the focus on the **raw connection**, **no application-layer protocols** (like HTTP) are used.
+[The Berkeley Sockets API](https://csperkins.org/teaching/2007-2008/networked-systems/lecture04.pdf). <br>
+It focuses on the **TCP socket creation, binding, and connection management** at the **Transport Layer**. <br>
+To keep the focus on the **raw connection**, **no application-layer protocols** (like HTTP) are used. <br>
 
 ---
 
 ### 🎯 Purpose
-Build and configure the server and client endpoints to handle raw connections and see how they talk to each other under the hood.
+Build and configure the server and client endpoints to handle raw connections.
 
 ---
 
@@ -28,6 +26,10 @@ sequenceDiagram
     Note over S: Listen for connections
     Note over S: Accept connections ➔ Get endpoint for client
     C->>S: Connect to server
+    opt gray Application Layer Protocol
+        C->>S: Request
+        S->>C: Response
+    end
     Note over S, C: Close connections
 ```
 
@@ -64,12 +66,13 @@ The communication follows a specific lifecycle:
 ### 🔗 In the system
 This conecpt that we are using takes place at the **Transport Layer (Layer 4)** of the network stack.
 
+#### [OSI Model](https://en.wikipedia.org/wiki/OSI_model):
 | Number | Layer | Responsibility | Protocol |
 |--------|-------|----------------|----------|
 | 7 | Application | Data structuring | HTTP, FTP, DNS, SSH |
 | 6 | Presentation | Encoding, encryption, compression | TLS/SSL, JPEG, ASCII |
 | 5 | Session | Managing sessions between applications | NetBIOS, RPC |
-| Here ➔ 4 | Transport | End-to-end delivery, reliability, ports | TCP, UDP |
+| ➔ 4 | Transport | End-to-end delivery, reliability, ports | TCP, UDP |
 | 3 | Network | Logical addressing, routing between networks | IP, ICMP, routing |
 | 2 | Data Link | Node-to-node transfer, MAC addressing, framing | Ethernet, Wi-Fi (802.11) |
 | 1 | Physical | Raw bit transmission over physical medium | Cables, radio, fiber |

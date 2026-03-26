@@ -16,15 +16,12 @@ The documentation is organized into **sections**, each covering a specific conce
 ### 📚 Sections 
 ```mermaid
 flowchart TD
-    start("🚀 Starting point")
-    
-    classDef start fill:#3498db, stroke:#3498db, color:#fff;
+    tcp(["🔌 TCP connections"]):::normal
 
-    class start start;
+    classDef normal fill:#3498db, stroke:#3498db, color:#000
 
-    click start "https://github.com/L0bstr/clawnet/blob/main/docs/starting_point.md"
+    click tcp "https://github.com/L0bstr/clawnet/blob/main/docs/tcp_connections.md"
 ```
-
 ---
 
 ## 📦 Dependencies
