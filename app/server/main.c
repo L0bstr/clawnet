@@ -97,35 +97,6 @@ int main(int argc, char *argv[]) {
       int client_port = ntohs(client_address.sin_port);
       printf("[%s] Client connected: %s:%d\n", argv[0], client_ip, client_port);
 
-      // keep connection alive with client
-      while(1) {
-         // reveice request header
-         uint16_t request_header;
-         int header_bytes_read = recv(client_socket, &request_header, sizeof(request_header), MSG_WAITALL);
-         if (header_bytes_read == -1) {
-            fprintf(stderr, "[%s] Failed to read client request header: %s:%d\n", argv[0], client_ip, client_port);
-            break;
-         } else if (header_bytes_read == 0) break;
-
-         // network byte order → host, 16-bit byte order
-         uint16_t request_body_length = ntohs(request_header);
-
-         // revceive request body
-         char *request_body = malloc(request_body_length + 1);
-         if (request_body == NULL) {
-            fprintf(stderr, "[%s] Failed to allocate buffer for client request\n", argv[0]);
-            break;
-         }
-         int body_bytes_read = recv(client_socket, request_body, request_body_length, MSG_WAITALL);
-         if (body_bytes_read == -1) {
-            fprintf(stderr, "[%s] Failed to read client request body: %s:%d\n", argv[0], client_ip, client_port);
-            break;
-         } else if (body_bytes_read == 0) break;
-
-         request_body[request_body_length] = '\0';
-         printf("[%s] Client sent (%d bytes):\n%s\n", argv[0], body_bytes_read, request_body);
-         free(request_body);
-      }
       close(client_socket);
       printf("[%s] Client connection closed: %s:%d\n", argv[0], client_ip, client_port);
    }

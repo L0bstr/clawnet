@@ -71,42 +71,7 @@ int main(int argc, char *argv[]) {
    }
    printf("[%s] Connected to server: %s:%d\n", argv[0], SERVER_IP, SERVER_PORT);
 
-   while (1) {
-      // get input
-      char *request_body = NULL;
-      size_t request_body_size = 0;
-      printf("[%s] Input (q to quit): ", argv[0]);
-      size_t request_body_length = getline(&request_body, &request_body_size, stdin);
-      if (request_body_length == -1) {
-         printf("\n");
-         fprintf(stderr, "[%s] Failed to read input from user.\n", argv[0]);
-         continue;
-      }
-
-      // quit
-      if (request_body_length == 2 && request_body[0] == 'q') break;
-
-      // host, 16-bit byte order → network byte order  
-      uint16_t request_header = htons(request_body_length);
-
-      // send request header
-      if(send(server_socket, &request_header, sizeof(request_header), 0) == -1) {
-         fprintf(stderr, "[%s] Failed to send request header to server: %s:%d\n", argv[0], SERVER_IP, SERVER_PORT);
-         close(server_socket);
-         fprintf(stderr, "[%s] Server connection closed: %s:%d\n", argv[0], SERVER_IP, SERVER_PORT);
-         exit(EXIT_FAILURE);
-      }
-      
-      // send request body
-      if(send(server_socket, request_body, request_body_length, 0) == -1) {
-         fprintf(stderr, "[%s] Failed to send request body to server: %s:%d\n", argv[0], SERVER_IP, SERVER_PORT);
-         close(server_socket);
-         fprintf(stderr, "[%s] Server connection closed: %s:%d\n", argv[0], SERVER_IP, SERVER_PORT);
-         exit(EXIT_FAILURE);
-      }
-   }
-
    close(server_socket);
-   fprintf(stderr, "[%s] Server connection closed: %s:%d\n", argv[0], SERVER_IP, SERVER_PORT);
+   fprintf(stderr, "[%s] Connection with server closed: %s:%d\n", argv[0], SERVER_IP, SERVER_PORT);
    return 0;
 }
