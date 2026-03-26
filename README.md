@@ -7,7 +7,6 @@ An evolving client and server implementation written in C.
 ---
 
 ### ℹ️ About
-
 `clawnet` is a hands-on networking project built to learn how **servers**, **clients**, and **network communication** work
 from the ground up written in **C**. <br>
 The documentation is organized into **sections**, each covering a specific concept or layer of abstraction. <br>
@@ -15,7 +14,6 @@ The documentation is organized into **sections**, each covering a specific conce
 ---
 
 ### 📚 Sections 
-
 ```mermaid
 flowchart TD
     start("🚀 Starting point")
@@ -51,7 +49,6 @@ cmake --build build
 ```
 
 ## 🐳 Dockerize
-
 ```bash
 docker build -t clawnet-server .
 ```
