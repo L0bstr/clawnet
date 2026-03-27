@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
+#include <time.h>
 #include <unistd.h>
 
 int main(int argc, char *argv[]) {
@@ -44,6 +45,11 @@ int main(int argc, char *argv[]) {
       exit(EXIT_FAILURE);
    }
 
+   ServerInfo server_info;
+   server_info.start_time = 0;
+   server_info.total_client_count = 0;
+   server_info.active_client_count = 0;
+
    // server socket
    int server_socket = socket(AF_INET, SOCK_STREAM, 0);
    if (server_socket == -1) {
@@ -75,6 +81,8 @@ int main(int argc, char *argv[]) {
       close(server_socket);
       exit(EXIT_FAILURE);
    }
+
+   time(&server_info.start_time);
    printf("[%s] Listening on %s:%d\n", argv[0], SERVER_IP, SERVER_PORT);
 
    // keep listening for connections
@@ -91,6 +99,8 @@ int main(int argc, char *argv[]) {
          close(server_socket);
          exit(EXIT_FAILURE);
       }
+      server_info.total_client_count++;
+      server_info.active_client_count++;
 
       // client info
       char *client_ip = inet_ntoa(client_address.sin_addr);
@@ -98,8 +108,11 @@ int main(int argc, char *argv[]) {
       printf("[%s] Client connected: %s:%d\n", argv[0], client_ip, client_port);
 
       close(client_socket);
+      server_info.active_client_count--;
       printf("[%s] Client connection closed: %s:%d\n", argv[0], client_ip, client_port);
    }
+
+   server_info.active_client_count = 0;
 
    close(server_socket);
    printf("[%s] Server closed\n", argv[0]);
