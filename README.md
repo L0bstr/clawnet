@@ -16,11 +16,13 @@ The documentation is organized into **sections**, each covering a specific conce
 ### 📚 Sections 
 ```mermaid
 flowchart TD
-    tcp(["🔌 TCP connections"]):::normal
+    tcp(["🔌 TCP connections"]):::normal -->
+    custom_app_prot(["🛠️ Custom application-layer protocol"]):::normal
 
     classDef normal fill:#3498db, stroke:#3498db, color:#000
 
     click tcp "https://github.com/L0bstr/clawnet/blob/main/docs/tcp_connections.md"
+    click custom_app_prot "https://github.com/L0bstr/clawnet/blob/main/docs/custom_application-layer_protocol.md"
 ```
 ---
 

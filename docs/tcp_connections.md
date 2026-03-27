@@ -3,7 +3,6 @@
 ## 🔌 TCP connections
 
 ### 🧠 Overview
-
 This section implements **low-level networking** via the
 [The Berkeley Sockets API](https://csperkins.org/teaching/2007-2008/networked-systems/lecture04.pdf). <br>
 It focuses on the **TCP socket creation, binding, and connection management** at the **Transport Layer**. <br>
