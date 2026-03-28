@@ -21,8 +21,8 @@ flowchart TD
 
     classDef normal fill:#3498db, stroke:#3498db, color:#000
 
-    click tcp "https://github.com/L0bstr/clawnet/blob/main/docs/tcp_connections.md"
-    click custom_app_prot "https://github.com/L0bstr/clawnet/blob/main/docs/custom_application-layer_protocol.md"
+    click tcp "https://github.com/L0bstr/clawnet/blob/main/docs/sections/tcp_connections.md"
+    click custom_app_prot "https://github.com/L0bstr/clawnet/blob/main/docs/sections/custom_application-layer_protocol.md"
 ```
 ---
 
