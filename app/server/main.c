@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
    }
 
    time(&server_info.start_time);
-   printf("[%s] Server is listening (%s%d)\n", argv[0], SERVER_IP, SERVER_PORT);
+   printf("[%s] Server is listening (%s:%d)\n", argv[0], SERVER_IP, SERVER_PORT);
 
    // keep listening for connections
    while (1) {
@@ -122,7 +122,7 @@ int main(int argc, char *argv[]) {
             fprintf(stderr, "[%s] Failed to read message: ", argv[0]);
             perror("");
          } else if (bytes_read == 0) {
-            printf("[%s] Client ended the connection (%s:%d)\n", argv[0], SERVER_IP, SERVER_PORT);
+            printf("[%s] Client ended the connection (%s:%d)\n", argv[0], client_ip, client_port);
             break;
          }
 
