@@ -1,7 +1,9 @@
 #include "server.h"
 #include <arpa/inet.h>
+#include <clawnet/protocol.h>
 #include <errno.h>
 #include <netinet/in.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,8 +13,8 @@
 #include <unistd.h>
 
 int main(int argc, char *argv[]) {
-   char *ip_arg = NULL;
-   char *port_arg = NULL;
+   char *ip_arg = "127.0.0.1";
+   char *port_arg = "3000";
 
    for (int i = 1; i < argc; i++) {
       if (strcmp(argv[i], "--help") == 0) {
@@ -68,6 +70,10 @@ int main(int argc, char *argv[]) {
       exit(EXIT_FAILURE);
    }
 
+   // Reuse TIMEWAIT port
+   int enable = 1;
+   setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable));
+
    // bind
    if(bind(server_socket, (struct sockaddr*)&server_address, sizeof(server_address)) == -1) {
       fprintf(stderr, "[%s] Failed to bind server address to server socket\n", argv[0]);
@@ -83,7 +89,7 @@ int main(int argc, char *argv[]) {
    }
 
    time(&server_info.start_time);
-   printf("[%s] Listening on %s:%d\n", argv[0], SERVER_IP, SERVER_PORT);
+   printf("[%s] Server is listening (%s%d)\n", argv[0], SERVER_IP, SERVER_PORT);
 
    // keep listening for connections
    while (1) {
@@ -105,11 +111,74 @@ int main(int argc, char *argv[]) {
       // client info
       char *client_ip = inet_ntoa(client_address.sin_addr);
       int client_port = ntohs(client_address.sin_port);
-      printf("[%s] Client connected: %s:%d\n", argv[0], client_ip, client_port);
+      printf("[%s] Client connected (%s:%d)\n", argv[0], client_ip, client_port);
+
+      // loop communication
+      while (1) {
+         // recv
+         char *request;
+         ssize_t bytes_read = recv_lv(client_socket, (void*)&request);
+         if (bytes_read == -1) {
+            fprintf(stderr, "[%s] Failed to read message: ", argv[0]);
+            perror("");
+         } else if (bytes_read == 0) {
+            printf("[%s] Client ended the connection (%s:%d)\n", argv[0], SERVER_IP, SERVER_PORT);
+            break;
+         }
+
+         printf("[%s] Client sent:\n%s\n", argv[0], request);
+
+         // send
+         ssize_t response_length;
+         char *response = NULL;
+         //    help
+         if (strcmp(request, "help") == 0) {
+            response = 
+               "Help:\n"
+               "  Commands:\n"
+               "    [help]    - prints this message\n"
+               "    [info]    - prints server info\n"
+               "    <unknown> - the server will echo back what the client sends"
+               "\n";
+            response_length = strlen(response);
+         }
+         //    server info
+         else if (strcmp(request, "info") == 0) {
+            time_t current = time(NULL);
+            long up_time = (long)difftime(current, server_info.start_time);
+
+            int hours = up_time / 3600;
+            int minutes = (up_time % 3600) / 60;
+            int seconds = up_time % 60;
+
+            char buf[1024];
+            snprintf(buf, sizeof(buf), 
+                  "ServerInfo\n"
+                  "  Uptime:         %02d:%02d:%02d\n"
+                  "  Total clients:  %d\n"
+                  "  Active clients: %d\n",
+                  hours, minutes, seconds,
+                  server_info.total_client_count,
+                  server_info.active_client_count);
+            response = buf;
+            response_length = strlen(buf);
+         }
+         //    echo
+         else {
+            response = request;
+            response_length = bytes_read;
+         }
+
+         ssize_t bytes_sent = send_lv(client_socket, response, strlen(response));
+         if (bytes_sent <= 0) {
+            fprintf(stderr, "[%s] Failed to send message to client (%s:%d)\n", argv[0], client_ip, client_port);
+            break;
+         }
+      }
 
       close(client_socket);
       server_info.active_client_count--;
-      printf("[%s] Client connection closed: %s:%d\n", argv[0], client_ip, client_port);
+      printf("[%s] Client connection closed (%s:%d)\n", argv[0], client_ip, client_port);
    }
 
    server_info.active_client_count = 0;

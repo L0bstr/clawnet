@@ -1,5 +1,6 @@
 #include "client.h"
 #include <arpa/inet.h>
+#include <clawnet/protocol.h>
 #include <errno.h>
 #include <netinet/in.h>
 #include <stddef.h>
@@ -11,8 +12,9 @@
 #include <unistd.h>
 
 int main(int argc, char *argv[]) {
-   char *ip_arg = NULL;
-   char *port_arg = NULL;
+   char *ip_arg;
+   char *port_arg;
+   int keep_alive = 0;
 
    for (int i = 1; i < argc; i++) {
       if (strcmp(argv[i], "--help") == 0) {
@@ -21,6 +23,7 @@ int main(int argc, char *argv[]) {
       }
       else if (strcmp(argv[i], "--ip") == 0 && i + 1 < argc) ip_arg = argv[++i];
       else if (strcmp(argv[i], "--port") == 0 && i + 1 < argc) port_arg = argv[++i];
+      else if (strcmp(argv[i], "--keep-alive") == 0) keep_alive = 1;
       else {
          fprintf(stderr, "[%s] Wrong usage: '%s'\n", argv[0], argv[i]);
          fprintf(stderr, "[%s] Try '%s --help'\n", argv[0], argv[0]);
@@ -69,9 +72,46 @@ int main(int argc, char *argv[]) {
       close(server_socket);
       exit(EXIT_FAILURE);
    }
-   printf("[%s] Connected to server: %s:%d\n", argv[0], SERVER_IP, SERVER_PORT);
+   printf("[%s] Connected to server (%s:%d)\n", argv[0], SERVER_IP, SERVER_PORT);
+
+   do {
+      // input
+      size_t n = 256;
+      char *input = malloc(n);
+      if (!input) {
+         fprintf(stderr, "[%s] Failed to allocate memory\n", argv[0]);
+         close(server_socket);
+         fprintf(stderr, "[%s] Connection with server closed (%s:%d)\n", argv[0], SERVER_IP, SERVER_PORT);
+         break;
+      }
+
+      printf("Input: ");
+      size_t char_read = getline(&input, &n, stdin);
+      if (char_read == EOF) break;
+
+      // send
+      ssize_t bytes_sent = send_lv(server_socket, input, char_read - 1);
+      if (bytes_sent <= 0) {
+         fprintf(stderr, "[%s] Failed to send message to server (%s:%d)\n", argv[0], SERVER_IP, SERVER_PORT);
+         break;
+      }
+
+      // recv
+      char *response;
+      ssize_t bytes_read = recv_lv(server_socket, (void*)&response);
+      if (bytes_read == -1) {
+         fprintf(stderr, "[%s] Failed to read message: ", argv[0]);
+         perror("");
+         break;
+      } else if (bytes_read == 0) {
+         printf("[%s] Server ended the connection (%s:%d)\n", argv[0], SERVER_IP, SERVER_PORT);
+         break;
+      }
+
+      printf("[%s] Server sent:\n%s\n", argv[0], response);
+   } while (keep_alive);
 
    close(server_socket);
-   fprintf(stderr, "[%s] Connection with server closed: %s:%d\n", argv[0], SERVER_IP, SERVER_PORT);
+   fprintf(stderr, "[%s] Sever connection closed (%s:%d)\n", argv[0], SERVER_IP, SERVER_PORT);
    return 0;
 }
