@@ -145,7 +145,7 @@ int main(int argc, char *argv[]) {
          //    server info
          else if (strcmp(request, "info") == 0) {
             time_t current = time(NULL);
-            long up_time = (long)difftime(current, server_info.start_time);
+            time_t up_time = (time_t)difftime(current, server_info.start_time);
 
             int hours = up_time / 3600;
             int minutes = (up_time % 3600) / 60;

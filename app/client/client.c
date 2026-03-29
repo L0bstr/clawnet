@@ -13,5 +13,5 @@ void print_help(const char *program_name) {
    printf("\t--help       \t\tPrints this message\n");
    printf("\t--ip <IP>    \t\tIPv4 address of the server\n");
    printf("\t--port <PORT>\t\tA port number on the server\n");
-   printf("\t--keep-alivet\t\tKeep the connection with the server alive\n");
+   printf("\t--keep-alive \t\tKeep the connection with the server alive\n");
 }
