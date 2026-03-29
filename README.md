@@ -8,22 +8,25 @@ An evolving client and server implementation written in C.
 
 ### ℹ️ About
 `clawnet` is a hands-on networking project built to learn how **servers**, **clients**, and **network communication** work
-from the ground up written in **C**. <br>
+from the ground up written in **C**.
+
 The documentation is organized into **sections**, each covering a specific concept or layer of abstraction. <br>
 
 ---
 
 ### 📚 Sections 
 ```mermaid
-flowchart TD
-    tcp(["🔌 TCP connections"]):::normal -->
-    custom_app_prot(["🛠️ Custom application-layer protocol"]):::normal
+stateDiagram-v2
+    direction BT
 
-    classDef normal fill:#3498db, stroke:#3498db, color:#000
-
-    click tcp "https://github.com/L0bstr/clawnet/blob/main/docs/sections/tcp_connections.md"
-    click custom_app_prot "https://github.com/L0bstr/clawnet/blob/main/docs/sections/custom_application-layer_protocol.md"
+    state "🔌 TCP connections" as tcp
+    state "🛠️ Custom application-layer protocol" as custom_app_prot
+    tcp --> custom_app_prot
 ```
+
+> [🛠️ Custom application-layer protocol](./docs/sections/custom_application-layer_protocol.md) <br>
+> [🔌 TCP connections](./docs/sections/tcp_connections.md)
+
 ---
 
 ## 📦 Dependencies

@@ -1,4 +1,4 @@
-[< back](../README.md)
+[< back](../../README.md)
 
 ## 🔌 TCP connections
 
@@ -23,9 +23,9 @@ sequenceDiagram
 
     Note over S, C: Create endpoint for the server
     Note over S: Listen for connections
-    Note over S: Accept connections ➔ Get endpoint for client
+    Note over S: Accept connections 🢂 Get endpoint for client
     C->>S: Connect to server
-    opt gray Application Layer Protocol
+    opt Application Layer Protocol
         C->>S: Request
         S->>C: Response
     end
@@ -39,9 +39,11 @@ The implementation relies on the [The Berkeley Sockets API](https://csperkins.or
 The communication follows a specific lifecycle:
 
 1. **Socket Creation** ([socket()](https://man7.org/linux/man-pages/man2/socket.2.html)):
-    - Both endpoints create a **file descriptor** - that the OS uses to identify connections.
-    - The server uses it to **manage incoming connection requests**.
-    - The client uses it to **connect, send, and receive** data.
+    - Both endpoints create **file descriptor**s that the OS uses to identify connections.
+    - The server uses
+        - one to **manage incoming connection requests**,
+        - and one for **each client** to **send** and **receive** data.
+    - The client uses one to **connect, send, and receive** data.
 
 2. **Binding** ([bind()](https://man7.org/linux/man-pages/man2/bind.2.html)):
     - Assigns a specific **IP address** and **port number** to a socket.
@@ -53,9 +55,9 @@ The communication follows a specific lifecycle:
 4. **The Handshake** ([connect()](https://man7.org/linux/man-pages/man2/connect.2.html)/
 [accept()](https://man7.org/linux/man-pages/man2/accept.2.html)):
     - The client calls `connect()` targeting the server's address: 
-    this triggers the **TCP three-way handshake** (SYN → SYN-ACK → ACK) handled by the OS.
+    this triggers the **TCP three-way handshake** (SYN 🢂 SYN-ACK 🢂 ACK) handled by the OS.
     - The server calls `accept()`, which **blocks** until a client connects,
-    then returns a new **socket descriptor** dedicated to that specific client.
+    then returns a new **socket file descriptor** dedicated to that specific client.
 
 5. **Termination** ([close()](https://man7.org/linux/man-pages/man2/close.2.html)):
     - Both sides call `close()` to release the **file descriptors** and signal the end of the connection.
@@ -66,15 +68,15 @@ The communication follows a specific lifecycle:
 This conecpt that we are using takes place at the **Transport Layer (Layer 4)** of the network stack.
 
 #### [OSI Model](https://en.wikipedia.org/wiki/OSI_model):
-| Number | Layer | Responsibility | Protocol |
-|--------|-------|----------------|----------|
-| 7 | Application | Data structuring | HTTP, FTP, DNS, SSH |
-| 6 | Presentation | Encoding, encryption, compression | TLS/SSL, JPEG, ASCII |
-| 5 | Session | Managing sessions between applications | NetBIOS, RPC |
-| ➔ 4 | Transport | End-to-end delivery, reliability, ports | TCP, UDP |
-| 3 | Network | Logical addressing, routing between networks | IP, ICMP, routing |
-| 2 | Data Link | Node-to-node transfer, MAC addressing, framing | Ethernet, Wi-Fi (802.11) |
-| 1 | Physical | Raw bit transmission over physical medium | Cables, radio, fiber |
+| Layer number | Layer        | Responsibility                                 | Protocol                 |
+|--------------|--------------|------------------------------------------------|--------------------------|
+| 7            | Application  | Data structuring                               | HTTP, FTP, DNS, SSH      |
+| 6            | Presentation | Encoding, encryption, compression              | TLS/SSL, JPEG, ASCII     |
+| 5            | Session      | Managing sessions between applications         | NetBIOS, RPC             |
+| 🢂 4          | Transport    | End-to-end delivery, reliability, ports        | TCP, UDP                 |
+| 3            | Network      | Logical addressing, routing between networks   | IP, ICMP, routing        |
+| 2            | Data Link    | Node-to-node transfer, MAC addressing, framing | Ethernet, Wi-Fi (802.11) |
+| 1            | Physical     | Raw bit transmission over physical medium      | Cables, radio, fiber     |
 
 ---
 
