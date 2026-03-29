@@ -13,8 +13,8 @@
 #include <unistd.h>
 
 int main(int argc, char *argv[]) {
-   char *ip_arg = "127.0.0.1";
-   char *port_arg = "3000";
+   char *ip_arg;
+   char *port_arg;
 
    for (int i = 1; i < argc; i++) {
       if (strcmp(argv[i], "--help") == 0) {
