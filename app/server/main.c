@@ -136,8 +136,8 @@ int main(int argc, char *argv[]) {
             response = 
                "Help:\n"
                "  Commands:\n"
-               "    [help]    - prints this message\n"
-               "    [info]    - prints server info\n"
+               "    [help]    - sends this message\n"
+               "    [info]    - sends server info\n"
                "    <unknown> - the server will echo back what the client sends"
                "\n";
             response_length = strlen(response);
