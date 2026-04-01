@@ -21,11 +21,22 @@ stateDiagram-v2
 
     state "🔌 TCP connections" as tcp
     state "🛠️ Custom application-layer protocol" as custom_app_prot
+    state "📨 Receive buffer" as recv_buffer
+
     tcp --> custom_app_prot
+    tcp --> recv_buffer
+
+    classDef highlight fill:#4D8DFF, stroke:#4D8DFF, color:#000
+    classDef normal fill:#A9C7FFB3, stroke:#, color:#000
+
+    class tcp highlight
+    class custom_app_prot highlight
+    class recv_buffer normal
 ```
 
 > [🛠️ Custom application-layer protocol](./docs/sections/custom_application-layer_protocol.md) <br>
-> [🔌 TCP connections](./docs/sections/tcp_connections.md)
+> [🔌 TCP connections](./docs/sections/tcp_connections.md) <br>
+> ([📨 Receive buffer](./docs/sections/recv_buffer.md))
 
 ---
 
