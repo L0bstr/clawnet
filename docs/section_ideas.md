@@ -1,5 +1,6 @@
 # Ideas
 
+- User sapce read-buffer (less syscalls + more controll over incoming data)
 - Multiplexing
 
 # Links
