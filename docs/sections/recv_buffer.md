@@ -37,14 +37,14 @@ stateDiagram-v2
 
     other --> os
     os --> recv
-    recv --> process : partial or \n excess data
-    process --> send : may discard \n unused data
+    recv --> process : partial or excess data
+    process --> send : may discard unused data
     send --> os
     os --> other
 ```
 
 #### After
-```
+```mermaid
 stateDiagram-v2
     direction LR
 
