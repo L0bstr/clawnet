@@ -64,18 +64,18 @@ Every message follows the same **length-prefixed** format:
 ---
 
 ### 🔗 In the system
-7his conecpt is at the **Application Layer (Layer 7)** of the network 7tack.
+This conecpt is at the **Application Layer (Layer 7)** of the network stack.
 
 #### [OSI Model](https://en.wikipedia.org/wiki/OSI_model):
-| Layer number | Layer | Responsibility | Protocol |
-|--------|-------|----------------|----------|
-| 🢂 7 | Application | Data structuring | HTTP, FTP, DNS, SSH |
-| 6 | Presentation | Encoding, encryption, compression | TLS/SSL, JPEG, ASCII |
-| 5 | Session | Managing sessions between applications | NetBIOS, RPC |
-| 4 | Transport | End-to-end delivery, reliability, ports | TCP, UDP |
-| 3 | Network | Logical addressing, routing between networks | IP, ICMP, routing |
-| 2 | Data Link | Node-to-node transfer, MAC addressing, framing | Ethernet, Wi-Fi (802.11) |
-| 1 | Physical | Raw bit transmission over physical medium | Cables, radio, fiber |
+|   | Layer number | Layer           | Responsibility                                 | Protocol                 |
+|---|--------------|-----------------|------------------------------------------------|--------------------------|
+| 🢂 | **7**        | **Application** | **Data structuring**                           | **HTTP, FTP, DNS, SSH**  |
+|   | 6            | Presentation    | Encoding, encryption, compression              | TLS/SSL, JPEG, ASCII     |
+|   | 5            | Session         | Managing sessions between applications         | NetBIOS, RPC             |
+|   | 4            | Transport       | End-to-end delivery, reliability, ports        | TCP, UDP                 |
+|   | 3            | Network         | Logical addressing, routing between networks   | IP, ICMP, routing        |
+|   | 2            | Data Link       | Node-to-node transfer, MAC addressing, framing | Ethernet, Wi-Fi (802.11) |
+|   | 1            | Physical        | Raw bit transmission over physical medium      | Cables, radio, fiber     |
 
 ---
 

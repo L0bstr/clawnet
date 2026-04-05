@@ -1,6 +1,6 @@
 [< back](../../README.md)
 
-## 📨 Receive buffer
+## 📥 Receive buffer
 
 ### 🧠 Overview
 Instead of handling every message immediately, data is accumulated in **controlled and larger chunks**.
@@ -81,18 +81,8 @@ stateDiagram-v2
 ---
 
 ### 🔗 In the system
-Part of the layer that uses it (5-7).
-
-#### [OSI Model](https://en.wikipedia.org/wiki/OSI_model):
-| Layer number | Layer        | Responsibility                                 | Protocol                 |
-|--------------|--------------|------------------------------------------------|--------------------------|
-| 🢂 7          | Application  | Data structuring                               | HTTP, FTP, DNS, SSH      |
-| 🢂 6          | Presentation | Encoding, encryption, compression              | TLS/SSL, JPEG, ASCII     |
-| 🢂 5          | Session      | Managing sessions between applications         | NetBIOS, RPC             |
-| 4            | Transport    | End-to-end delivery, reliability, ports        | TCP, UDP                 |
-| 3            | Network      | Logical addressing, routing between networks   | IP, ICMP, routing        |
-| 2            | Data Link    | Node-to-node transfer, MAC addressing, framing | Ethernet, Wi-Fi (802.11) |
-| 1            | Physical     | Raw bit transmission over physical medium      | Cables, radio, fiber     |
+A general-purpose buffer that sits between the **OS** and the **data processing** part,
+smoothing out data flow without being tied to any specific networking layer.
 
 ---
 
