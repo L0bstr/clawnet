@@ -10,8 +10,8 @@ COPY ./CMakeLists.txt ./
 COPY ./app/ ./app/
 COPY ./core/ ./core/
 
-RUN cmake -B build && cmake --build build -t clawnetd
+RUN cmake -B build && cmake --build build -t trawld
 
 EXPOSE 3000
 
-CMD ["stdbuf", "-oL", "./build/bin/clawnetd", "--ip", "0.0.0.0", "--port", "3000"]
+CMD ["stdbuf", "-oL", "./build/bin/trawld", "--ip", "0.0.0.0", "--port", "3000"]

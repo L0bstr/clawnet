@@ -1,4 +1,4 @@
-# 🦞 clawnet
+# 🦞 trawl
 
 ![Linux only](https://badgen.net/badge/Linux/only/D4A017?icon=terminal)
 
@@ -7,7 +7,7 @@ An evolving client and server implementation written in C.
 ---
 
 ### ℹ️ About
-`clawnet` is a hands-on networking project built to learn how **servers**, **clients**, and **network communication** work
+`trawl` is a hands-on networking project built to learn how **servers**, **clients**, and **network communication** work
 from the ground up written in **C**.
 
 The documentation is organized into **sections**, each covering a specific concept or layer of abstraction. <br>
@@ -55,17 +55,17 @@ cmake --build build
 
 ```bash
 # server
-./build/bin/clawnetd --help
+./build/bin/trawld --help
 
 # client
-./build/bin/clawnet --help
+./build/bin/trawl --help
 ```
 
 ## 🐳 Dockerize
 ```bash
-docker build -t clawnet-server .
+docker build -t trawl-server .
 ```
 
 ```bash
-docker run -d -p 3000:3000 --name clawnet-server clawnet-server:latest
+docker run -d -p 3000:3000 --name trawl-server trawl-server:latest
 ```

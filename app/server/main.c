@@ -1,6 +1,6 @@
 #include "server.h"
 #include <arpa/inet.h>
-#include <clawnet/protocol.h>
+#include <trawl/protocol.h>
 #include <errno.h>
 #include <netinet/in.h>
 #include <stddef.h>

@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.20)
-project(clawnet C)
+project(trawl C)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_C_STANDARD 11)
 
 # Static core library
-set(LIB "clawnet_lib")
+set(LIB "trawl_lib")
 file(GLOB_RECURSE LIB_SRC CONFIGURE_DEPENDS "core/src/*.c")
 add_library(${LIB} STATIC ${LIB_SRC})
 target_include_directories(${LIB} PUBLIC "core/include")
@@ -18,13 +18,13 @@ set_target_properties(${LIB} PROPERTIES
 )
 
 # Client
-set(CLIENT "clawnet")
+set(CLIENT "trawl")
 file(GLOB_RECURSE CLIENT_SRC CONFIGURE_DEPENDS "app/client/*.c")
 add_executable(${CLIENT} ${CLIENT_SRC})
 target_link_libraries(${CLIENT} PRIVATE ${LIB})
 
 # Server
-set(SERVER "clawnetd")
+set(SERVER "trawld")
 file(GLOB_RECURSE SERVER_SRC CONFIGURE_DEPENDS "app/server/*.c")
 add_executable(${SERVER} ${SERVER_SRC})
 target_link_libraries(${SERVER} PRIVATE ${LIB})
