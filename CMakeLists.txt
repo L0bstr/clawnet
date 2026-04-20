@@ -10,7 +10,7 @@ file(GLOB_RECURSE LIB_SRC CONFIGURE_DEPENDS "core/src/*.c")
 add_library(${LIB} STATIC ${LIB_SRC})
 target_include_directories(${LIB} PUBLIC "core/include")
 
-## Remoce name prefixes
+## Remove name prefixes
 set_target_properties(${LIB} PROPERTIES 
     PREFIX ""
     IMPORT_PREFIX ""
