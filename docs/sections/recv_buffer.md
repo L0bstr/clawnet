@@ -80,7 +80,7 @@ stateDiagram-v2
 
 ---
 
-### 🔗 In the system
+### 🧩 In the system
 A general-purpose buffer that sits between the **OS** and the **data processing** part,
 smoothing out data flow without being tied to any specific networking layer.
 

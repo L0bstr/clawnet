@@ -20,7 +20,7 @@ Technical explanation (clear but deeper)
 
 ---
 
-### 🔗 In the system
+### 🧩 In the system
 Where this fits in the bigger picture
 
 ---

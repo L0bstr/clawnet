@@ -63,7 +63,7 @@ Every message follows the same **length-prefixed** format:
 
 ---
 
-### 🔗 In the system
+### 🧩 In the system
 This conecpt is at the **Application Layer (Layer 7)** of the network stack.
 
 #### [OSI Model](https://en.wikipedia.org/wiki/OSI_model):

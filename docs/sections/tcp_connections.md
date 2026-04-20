@@ -64,7 +64,7 @@ The communication follows a specific lifecycle:
 
 ---
 
-### 🔗 In the system
+### 🧩 In the system
 This conecpt that we are using takes place at the **Transport Layer (Layer 4)** of the network stack.
 
 #### [OSI Model](https://en.wikipedia.org/wiki/OSI_model):
