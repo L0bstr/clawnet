@@ -1,6 +1,5 @@
 #include "server.h"
 #include <arpa/inet.h>
-#include <trawl/protocol.h>
 #include <errno.h>
 #include <netinet/in.h>
 #include <stddef.h>
@@ -10,6 +9,7 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <time.h>
+#include <trawl/protocol.h>
 #include <unistd.h>
 
 int main(int argc, char *argv[]) {
