@@ -82,15 +82,10 @@ The buffer is a byte array tracked by three fields: `start`, `len`, and `capacit
 - **`len`** — number of available (unconsumed) bytes
 - **`capacity`** — total allocated size
 
-```mermaid
-block-beta
-  columns 8
-  block:buf:8
-    A["consumed"] B["data (len)"] C["free space"]
-  end
-  space:2
-  S["↑ start"] space:2 E["↑ start + len"]
 ```
+[consumed      | data (len)         | free space        ]
+ ↑ buf          ↑ buf+start          ↑ buf+start+len     ↑ buf+capacity
+``````
 
 **Lifecycle:**
 
