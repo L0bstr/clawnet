@@ -2,19 +2,22 @@
 
 ![Linux only](https://badgen.net/badge/Linux/only/D4A017?icon=terminal)
 
-An evolving client and server implementation written in C.
+Exploring networking layers in **C** through **client–server** implementations.
 
 ---
 
 ### ℹ️ About
-`trawl` is a hands-on networking project built to learn how **servers**, **clients**, and **network communication** work
-from the ground up written in **C**.
+`trawl` is a hands-on networking project built to learn how **servers**, **clients**, and **network communication**
+works in different layers written in **C**. <br>
 
-The documentation is organized into **sections**, each covering a specific concept or layer of abstraction. <br>
+[**Read More**](/docs/repo-structure.md)
 
 ---
 
 ### 📚 Sections 
+The project is organized into **sections**, each covering a specific concept or layer of abstraction. <br>
+Sections can be **viewed independently** in their **own branches**.
+
 ```mermaid
 stateDiagram-v2
     direction BT
@@ -37,7 +40,7 @@ stateDiagram-v2
 > #### 🔗 Read more
 > [🛠️ Custom application-layer protocol](./docs/sections/custom_application-layer_protocol.md) <br>
 > [🔌 TCP connections](./docs/sections/tcp_connections.md) <br>
-> ([📨 Receive buffer](./docs/sections/recv_buffer.md))
+> [📨 Receive buffer](./docs/sections/recv_buffer.md)
 
 ---
 
