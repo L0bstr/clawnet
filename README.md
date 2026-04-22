@@ -8,7 +8,7 @@ Exploring networking layers in **C** through **client–server** implementations
 
 ### ℹ️ About
 `trawl` is a hands-on networking project built to learn how **servers**, **clients**, and **network communication**
-works in different layers written in **C**. <br>
+works in different layers, written in **C**. <br>
 
 [**Read More**](/docs/repo-structure.md)
 
@@ -16,31 +16,43 @@ works in different layers written in **C**. <br>
 
 ### 📚 Sections 
 The project is organized into **sections**, each covering a specific concept or layer of abstraction. <br>
-Sections can be **viewed independently** in their **own branches**.
+Sections can be **studied independently** in their **own branches**.
 
 ```mermaid
 stateDiagram-v2
     direction BT
 
     state "🔌 TCP connections" as tcp
-    state "🛠️ Custom application-layer protocol" as custom_app_prot
     state "📨 Receive buffer" as recv_buffer
+    state "🛠️ Custom application-layer protocol" as custom_app_prot
+    state "🌐 picohttpparser http parser" as picohttpparser
+
+    state "Application Layer" as application_layer {
+        custom_app_prot
+        picohttpparser
+    }
+
+    state "Transport Layer" as transport_layer {
+        tcp
+    }
 
     tcp --> custom_app_prot
     tcp --> recv_buffer
+    recv_buffer --> picohttpparser
 
-    classDef highlight fill:#4D8DFF, stroke:#4D8DFF, color:#000
-    classDef normal fill:#A9C7FFB3, stroke:#, color:#000
+    classDef current fill:#4D8DFF, stroke:#4D8DFF, color:#000
+    classDef normal fill:#A9C7FFB3, stroke:#A9C7FFB3, color:#000
 
-    class tcp highlight
-    class custom_app_prot highlight
+    class tcp normal
     class recv_buffer normal
+    class custom_app_prot normal
+    class picohttpparser current
 ```
 
-> #### 🔗 Read more
 > [🛠️ Custom application-layer protocol](./docs/sections/custom_application-layer_protocol.md) <br>
 > [🔌 TCP connections](./docs/sections/tcp_connections.md) <br>
-> [📨 Receive buffer](./docs/sections/recv_buffer.md)
+> [📨 Receive buffer](./docs/sections/recv_buffer.md) <br>
+> [🌐 picohttpparser http parser](./docs/sections/picohttpparser_http_parser.md)
 
 ---
 
