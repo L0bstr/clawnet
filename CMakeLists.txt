@@ -7,8 +7,14 @@ set(CMAKE_C_STANDARD 11)
 # Static core library
 set(LIB "trawl_lib")
 file(GLOB_RECURSE LIB_SRC CONFIGURE_DEPENDS "core/src/*.c")
-add_library(${LIB} STATIC ${LIB_SRC})
+file(GLOB_RECURSE VENDOR_SRC CONFIGURE_DEPENDS "vendor/*.c")
+file(GLOB_RECURSE VENDOR_INCLUDES CONFIGURE_DEPENDS "vendor/*/include")
+add_library(${LIB} STATIC 
+   ${LIB_SRC}
+   ${VENDOR_SRC}
+)
 target_include_directories(${LIB} PUBLIC "core/include")
+target_include_directories(${LIB} PUBLIC ${VENDOR_INCLUDES})
 
 ## Remove name prefixes
 set_target_properties(${LIB} PROPERTIES 
