@@ -10,7 +10,7 @@ Exploring networking layers in **C** through **client–server** implementations
 `trawl` is a hands-on networking project built to learn how **servers**, **clients**, and **network communication**
 works in different layers, written in **C**. <br>
 
-[**Read More**](/docs/repo-structure.md)
+[**Read More**](./docs/repo-structure.md)
 
 ---
 
@@ -24,35 +24,35 @@ stateDiagram-v2
 
     state "🔌 TCP connections" as tcp
     state "📨 Receive buffer" as recv_buffer
-    state "🛠️ Custom application-layer protocol" as custom_app_prot
-    state "🌐 picohttpparser http parser" as picohttpparser
+    state "🛠️ Custom protocol" as custom_prot
+    state "🌐 HTTP" as http
 
     state "Application Layer" as application_layer {
-        custom_app_prot
-        picohttpparser
+        custom_prot
+        http
     }
 
     state "Transport Layer" as transport_layer {
         tcp
     }
 
-    tcp --> custom_app_prot
+    tcp --> custom_prot
     tcp --> recv_buffer
-    recv_buffer --> picohttpparser
+    recv_buffer --> http
 
-    classDef current fill:#4D8DFF, stroke:#4D8DFF, color:#000
-    classDef normal fill:#A9C7FFB3, stroke:#A9C7FFB3, color:#000
+    classDef current fill:#223760, stroke:#D3D7DF, color:#D3D7DF, stroke-width:2px
+    classDef normal fill:#223760, stroke:#223760, color:#D3D7DF
 
     class tcp normal
     class recv_buffer normal
-    class custom_app_prot normal
-    class picohttpparser current
+    class custom_prot normal
+    class http current
 ```
 
 > [🛠️ Custom application-layer protocol](./docs/sections/custom_application-layer_protocol.md) <br>
 > [🔌 TCP connections](./docs/sections/tcp_connections.md) <br>
 > [📨 Receive buffer](./docs/sections/recv_buffer.md) <br>
-> [🌐 picohttpparser http parser](./docs/sections/picohttpparser_http_parser.md)
+> [🌐 HTTP](./docs/sections/picohttpparser_http_parser.md)
 
 ---
 

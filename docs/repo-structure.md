@@ -42,6 +42,36 @@ section/c
 A section is a self-contained implementation that documents a specific concept.
 It lives on its own branch and is versioned independently.
 
+### Section Variants and Subsections
+A section may also represent a layer of abstraction explored at multiple levels. The pattern is:
+
+1. Use an existing protocol/standard as the starting point (e.g. HTTP, TCP)
+2. Use a public library to implement it — learn how it works from the outside
+3. Build your own replica — implement the internals yourself
+4. Invent a custom alternative — a separate section entirely
+
+Each level of this exploration is a subsection: a branch forked from the parent section's branch, indexed under it.
+```
+section/http           ← parent section, documents the concept + indexes subsections
+  section/http/parser-lib    ← subsection: use a public HTTP parser
+  section/http/own-parser    ← subsection: implement your own HTTP parser
+
+section/tcp            ← separate parent section
+  section/tcp/os-api         ← subsection: use OS-provided TCP API
+  section/tcp/own-impl       ← subsection: implement your own TCP stack
+
+section/custom-protocol      ← fully custom invention, its own top-level section
+```
+
+The parent section acts as a documentation hub: it describes the concept, explains the exploration pattern,
+and indexes its subsections. It may or may not contain runnable code itself.
+
+Subsections follow the same rules as sections — they are independent branches, versioned with semver,
+and tagged stable before being used as an origin.
+
+The distinction between a subsection (variant of an existing protocol/concept) and a new section (custom invention)
+is intentional: subsections deepen understanding of something that already exists; new sections introduce something novel.
+
 ### Versioning
 Sections are tagged using [semver](https://semver.org/):
 
@@ -76,7 +106,7 @@ stateDiagram-v2
     section_b --> section_a
     section_d --> section_c
 
-    classDef highlight fill:#4D8DFF, stroke:#4D8DFF, color:#000
+    classDef highlight fill:#223760, stroke:#223760, color:#D3D7DF
 
     class section_a highlight
     class section_b highlight
