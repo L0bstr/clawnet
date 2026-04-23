@@ -1,8 +1,8 @@
-[< back](../../README.md)
+[< back](/README.md#-sections)
 
 ## 🛠️ Custom application protocol
 > [!NOTE]
-> This topic builds on top of the knowledge from the **[TCP connections](./tcp_connections.md)** section.
+> This topic builds on top of the knowledge from the **[TCP connections](/docs/sections/tcp/tcp_connections.md)** section.
 
 ### 🧠 Overview
 A custom **application-layer protocol** defines the rules for how the **client** and **server** communicate on top of a raw

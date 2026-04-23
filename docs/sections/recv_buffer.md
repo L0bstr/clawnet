@@ -1,4 +1,4 @@
-[< back](../../README.md)
+[< back](/README.md#-sections)
 
 ## 📥 Receive buffer
 
@@ -78,9 +78,9 @@ stateDiagram-v2
 ### ⚙️ How it works
 The buffer is a byte array tracked by three fields: `start`, `len`, and `capacity`.
 
-- **`start`** — offset to the first unconsumed byte
-- **`len`** — number of available (unconsumed) bytes
-- **`capacity`** — total allocated size
+- **`start`** - offset to the first unconsumed byte
+- **`len`** - number of available (unconsumed) bytes
+- **`capacity`** - total allocated size
 
 ```
 [consumed      | data (len)         | free space        ]
