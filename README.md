@@ -44,7 +44,7 @@ stateDiagram-v2
 [🛠️ Custom protocol](/docs/sections/custom_application_layer_protocol/custom_application-layer_protocol.md) |
 [🌐 HTTP](/docs/sections/http/readme.md) <br>
 [📨 Receive buffer](./docs/sections/recv_buffer.md) <br>
-[🔌 TCP](/docs/sections/tcp/tcp_connections.md)
+[🔌 TCP](/docs/sections/tcp/readme.md)
 
 ---
 

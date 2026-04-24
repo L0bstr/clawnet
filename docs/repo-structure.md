@@ -1,3 +1,5 @@
+[< back](/README.md#-sections)
+
 # Repository Structure
 
 ## Layout
@@ -50,9 +52,9 @@ Subsections are variants of the same concept at different abstraction levels, ne
 ```
 core/
   http/
-    parser-lib/  ← variant: use a public parser
+    parser-lib/ 🢀 variant: use a public parser
       v1/
-    own-parser/  ← variant: implement your own
+    own-parser/ 🢀 variant: implement your own
       v1/
 ```
 
