@@ -16,7 +16,6 @@ works in different layers, written in **C**. <br>
 
 ### 📚 Sections 
 The project is organized into **sections**, each covering a specific concept or layer of abstraction. <br>
-Sections can be **studied independently** in their **own branches**.
 
 ```mermaid
 stateDiagram-v2
