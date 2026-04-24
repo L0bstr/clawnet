@@ -10,7 +10,7 @@ Exploring networking layers in **C** through **client–server** implementations
 `trawl` is a hands-on networking project built to learn how **servers**, **clients**, and **network communication**
 works in different layers, written in **C**. <br>
 
-[**Project Structure**](./docs/repo-structure.md)
+[**Project Structure**](/docs/repo-structure.md)
 
 ---
 
@@ -24,11 +24,11 @@ stateDiagram-v2
 
     state "🔌 TCP" as tcp
     state "📨 Receive buffer" as recv_buffer
-    state "🛠️ Custom protocol" as custom_prot
+    state "🛠️ Custom protocol" as custom_application_protocol
     state "🌐 HTTP" as http
 
     state "Application Layer" as application_layer {
-        custom_prot
+        custom_application_protocol
         http
     }
 
@@ -36,7 +36,7 @@ stateDiagram-v2
         tcp
     }
 
-    tcp --> custom_prot
+    tcp --> custom_application_protocol
     tcp --> recv_buffer
     recv_buffer --> http
 ```

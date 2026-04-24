@@ -27,7 +27,7 @@ sequenceDiagram
     C->>S: Connect to server
     opt Application Layer Protocol
         C->>S: Request
-        S->>C: Response
+        S-->>C: Response
     end
     Note over S, C: Close connections
 ```

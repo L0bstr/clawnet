@@ -83,8 +83,8 @@ The buffer is a byte array tracked by three fields: `start`, `len`, and `capacit
 - **`capacity`** - total allocated size
 
 ```
-[consumed      | data (len)         | free space        ]
- ↑ buf          ↑ buf+start          ↑ buf+start+len     ↑ buf+capacity
+[consumed | data (len)  | free space        ]
+ ↑ buf      ↑ buf+start   ↑ buf+start+len  ↑ buf+capacity
 ``````
 
 **Lifecycle:**

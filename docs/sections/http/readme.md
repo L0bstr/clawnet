@@ -25,7 +25,7 @@ sequenceDiagram
     loop
         C->>S: Request
         Note over S: Process request
-        S->>C: Response
+        S-->>C: Response
         Note over C: Process response
     end
     Note over S, C: --Close connection--
@@ -35,29 +35,34 @@ sequenceDiagram
 ### ⚙️ How it works
 #### Example request
 ```
-GET /index.html HTTP/1.1\r\n
-Host: example.com\r\n
-\r\n
+GET /index.html HTTP/1.1\r\n  |
+Host: example.com\r\n         | Header
+\r\n                          -
+                              | No body
 ```
-| Part       | Example       |
-|------------|---------------|
-| Method     | `GET`         |
-| Path       | `/index.html` |
-| Version    | `HTTP/1.1`    |
-| Headers    | `example.com` |
-| Blank line | `\r\n`        |
+| Part           | Example        |
+|----------------|----------------|
+| Method         | `GET`          |
+| Path           | `/index.html`  |
+| Version        | `HTTP/1.1`     |
+| Host           | `example.com`  |
+| End of header  | `\r\n`         |
 
 #### Example response
 ```
-HTTP/1.1 200 OK\r\n
-\r\n
+HTTP/1.1 200 OK\r\n     |
+Content-Length: 12\r\n  | Header
+\r\n                    -
+Hello World!            | Content/Body
 ```
-| Part          | Example    |
-|---------------|------------|
-| Version       | `HTTP/1.1` |
-| Status code   | `200`      |
-| Reason phrase | `OK`       |
-| Blank line    | `\r\n`     |
+| Part           | Example        |
+|----------------|----------------|
+| Version        | `HTTP/1.1`     |
+| Status code    | `200`          |
+| Reason phrase  | `OK`           |
+| Content-Length | `12`           |
+| End of header  | `\r\n`         |
+| Content/Body   | `Hello World!` |
 
 ---
 
