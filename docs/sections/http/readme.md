@@ -35,10 +35,10 @@ sequenceDiagram
 ### ⚙️ How it works
 #### Example request
 ```
-GET /index.html HTTP/1.1\r\n  |
-Host: example.com\r\n         | Header
-\r\n                          -
-                              | No body
+GET /index.html HTTP/1.1\r\n
+Host: example.com\r\n
+\r\n
+                            
 ```
 | Part           | Example        |
 |----------------|----------------|
@@ -50,10 +50,10 @@ Host: example.com\r\n         | Header
 
 #### Example response
 ```
-HTTP/1.1 200 OK\r\n     |
-Content-Length: 12\r\n  | Header
-\r\n                    -
-Hello World!            | Content/Body
+HTTP/1.1 200 OK\r\n
+Content-Length: 12\r\n
+\r\n
+Hello World!
 ```
 | Part           | Example        |
 |----------------|----------------|
