@@ -25,5 +25,13 @@ Where this fits in the bigger picture
 
 ---
 
+### 📚 Subsections 
+```mermaid
+stateDiagram-v2
+    direction BT
+```
+
+---
+
 ### 🔎 Further reading
 Links or references for deeper understanding

@@ -9,64 +9,67 @@ ordered delivery of bytes between two endpoints over a network.
 ---
 
 ### 🎯 Purpose
-Why this concept exists.
+- Reliable, ordered delivery - retransmits lost/corrupt packets, reassembles in order
+- Flow/congestion control - don't overwhelm receiver or network
+- Connection management - establish/tear down sessions (handshake)
 
 ---
 
 ### 👀 Visual / Mental Model
+#### Connection lifecycle
 ```mermaid
 sequenceDiagram
-    participant C as Client
-    participant S as Server
+    participant S as Sender
+    participant R as Receiver
 
     rect rgb(60, 60, 60)
-        Note over C, S: Three-way handshake
-        C->>S: SYN
-        S->>C: SYN-ACK
-        C->>S: ACK
+        Note over S, R: Three-way handshake
+        S->>R: SYN
+        R->>S: SYN-ACK
+        S->>R: ACK
     end
 
     rect rgb(60, 60, 60)
-        Note over C, S: Data exchange
-        C->>S: Data
-        S->>C: ACK
+        Note over S, R: Data exchange
+        S->>R: Data
+        R->>S: ACK
     end
 
     rect rgb(60, 60, 60)
-        Note over C, S: Connection teardown
-        C->>S: FIN
-        S->>C: ACK
-        S->>C: FIN
-        C->>S: ACK
+        Note over S, R: Connection teardown
+        S->>R: FIN
+        R->>S: ACK
+        R->>S: FIN
+        S->>R: ACK
     end
 ```
-> SYN (Synchronize) — "I want to connect, here's my starting sequence number" <br>
-> SYN-ACK — server agrees and sends its own starting sequence number <br>
-> ACK (Acknowledge) — "got it" <br>
-> Data — actual payload <br>
-> FIN (Finish) — "I'm done sending, want to close"
+> SYN (Synchronize) - "I want to connect, here's my starting sequence number" <br>
+> SYN-ACK - server agrees and sends its own starting sequence number <br>
+> ACK (Acknowledge) - "got it" <br>
+> Data - actual payload <br>
+> FIN (Finish) - "I'm done sending, want to close"
 
 #### Data exchnage
 Data is broken down into smaller packets.
 
 ```mermaid
 sequenceDiagram
-    participant C as Client
-    participant S as Server
+participant S as Sender
+    participant R as Receiver
 
-    S->>C: SEQ=1 [packet 1] ✅
-    S->>C: SEQ=2 [packet 2] ❌
-    S->>C: SEQ=3 [packet 3] ✅
+    S->>R: SEQ=1 [packet 1] ✅
+    S->>R: SEQ=2 [packet 2] ❌
+    S->>R: SEQ=3 [packet 3] ✅
 
-    Note over C: Missing SEQ=2
-    C-->>S: ACK=2 (request SEQ=2)
-    C-->>S: ACK=2 (request SEQ=2)
-    C-->>S: ACK=2 (request SEQ=2)
+    Note over R: Missing SEQ=2
+    R-->>S: ACK=2 (request SEQ=2)
+    R-->>S: ACK=2 (request SEQ=2)
+    R-->>S: ACK=2 (request SEQ=2)
 
-    Note over S: 3 duplicated ACK=2 triggers a retransmit for SEQ=2
-    S->>C: SEQ=2 [retransmit]
+    Note over S: 3 duplicated [ACK=2] triggers a retransmit for SEQ=2
+    S->>R: SEQ=2 [retransmit]
 
-    C-->>S: ACK=4 (3 packets recieved)
+    R-->>S: ACK=4 (3 packets recieved)
 ```
 > SEQ - Sequence number <br>
 > ACK - Acknowledgement number
@@ -74,8 +77,8 @@ sequenceDiagram
 ---
 
 ### ⚙️ How it works
-TCP is a stream protocol - it has no concept of messages or boundaries. When you call `recv()`,
-you may get more or less bytes than expected.
+TCP is a stream protocol - it has no concept of messages or boundaries.
+A read operation may return more or fewer bytes than expected.
 It is the application's responsibility to define where one message ends and the next begins.
 
 ---
@@ -93,6 +96,17 @@ TCP sits at the transport layer - it handles how data gets there reliably, so hi
 |   | 3            | Network         | Logical addressing, routing between networks   | IP, ICMP, routing        |
 |   | 2            | Data Link       | Node-to-node transfer, MAC addressing, framing | Ethernet, Wi-Fi (802.11) |
 |   | 1            | Physical        | Raw bit transmission over physical medium      | Cables, radio, fiber     |
+
+---
+
+### 📚 Subsections 
+```mermaid
+stateDiagram-v2
+    direction BT
+    state "berkeley-sockets" as berkeley
+```
+
+[berkeley-sockets](/docs/sections/tcp/berkeley_sockets.md)
 
 ---
 

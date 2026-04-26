@@ -3,13 +3,13 @@
 ## 📥 Receive buffer
 
 ### 🧠 Overview
-Instead of handling every message immediately, data is accumulated in **controlled and larger chunks**.
+Instead of handling every chunk of data immediately, it is accumulated in **controlled and larger buffer**.
 
 ---
 
 ### 🎯 Purpose
 - Improve performance by reducing `SYSCALLS` from repeated OS buffer reads.
-- Provide better control over incoming data.
+- Provide more control over incoming data.
 
 ---
 
@@ -28,10 +28,9 @@ stateDiagram-v2
 
         state "OS" as os
         state "Program" as program {
-
-            state "recv()" as recv
-            state "send()" as send
+            state "read from OS" as recv
             state "Process data" as process
+            state "send to OS" as send
         }
     }
 
@@ -56,10 +55,10 @@ stateDiagram-v2
         state "OS" as os
         state "Program" as program {
 
-            state "recv()" as recv
+            state "read from OS" as recv
             state "Receive buffer" as recv_buf
             state "Process data" as process
-            state "send()" as send
+            state "send to OS" as send
         }
     }
 
@@ -76,34 +75,64 @@ stateDiagram-v2
 ---
 
 ### ⚙️ How it works
-The buffer is a byte array tracked by three fields: `start`, `len`, and `capacity`.
 
-- **`start`** - offset to the first unconsumed byte
-- **`len`** - number of available (unconsumed) bytes
-- **`capacity`** - total allocated size
+`recv_buffer_t` is a sliding-window byte buffer that sits between your **socket layer** and your **protocol/parsing layer**. <br>
+It absorbs raw incoming bytes and lets your app consume them at its own pace - no fixed-size reads, no manual shifting.
 
+**The buffer has two key fields:**
+- `start` - where unread data begins
+- `len` - how many bytes are available
+
+As you read, `start` advances forward. When space runs out at the back, `recv_buffer_compact()` slides the data back to the front. If there's still not enough room, it grows automatically (doubles, or fits the needed size).
+
+**Typical usage flow:**
+
+```c
+// 1. Receive bytes from a socket directly into the buffer
+recv_buffer_recv(&buf, 4096, fd, 0);
+
+// 2. Peek at the data without consuming it (e.g. to check a header)
+const uint8_t *data = recv_buffer_peek(&buf);
+
+// 3. Once ready, consume N bytes
+recv_buffer_read(&buf, out, n);
 ```
-[consumed | data (len)  | free space        ]
- ↑ buf      ↑ buf+start   ↑ buf+start+len  ↑ buf+capacity
-``````
 
-**Lifecycle:**
-
-1. `recv_buffer_init` - allocates the backing buffer with a default capacity.
-2. `recv_buffer_recv` - calls `recv()` into the free region (`buf + start + len`), growing `len`.
-3. `recv_buffer_peek` - returns a read-only pointer to `buf + start`; no consumption.
-4. `recv_buffer_read` - copies up to `n` bytes out, advances `start`, shrinks `len`.
-5. `recv_buffer_compact` - shifts `buf[start..start+len]` back to `buf[0]`, resets `start` to 0. Called when free space is low but capacity is sufficient.
-6. `recv_buffer_resize` - `realloc`s when even after compaction there isn't enough room.
-7. `recv_buffer_free` - frees the backing buffer.
-
-Data is never overwritten until explicitly consumed via `recv_buffer_read`.
+You can also push arbitrary data in with `recv_buffer_write()` - useful for testing or injecting
+data from sources other than a socket.
 
 ---
 
 ### 🧩 In the system
-A general-purpose buffer that sits between the **OS** and the **data processing** part,
-smoothing out data flow without being tied to any specific networking layer.
+
+`recv_buffer_t` is a generic byte buffer with no inherent network awareness.
+The only thing that connects it to the network stack is `recv_buffer_recv()`,
+which calls the Berkeley sockets API (`recv()`) to pull bytes up from Layer 4.
+
+Everything else - `recv_buffer_write()`, `recv_buffer_read()`, `recv_buffer_peek()` - is just memory manipulation.
+
+#### Surrounding interactions
+
+| Component | Direction | How it interacts |
+|---|---|---|
+| **OS / TCP stack** | → buffer | `recv_buffer_recv()` calls `recv()` syscall, pulling bytes off the socket into the buffer |
+| **Your parser / protocol** | buffer → | Calls `recv_buffer_peek()` to inspect, `recv_buffer_read()` to consume once a full message is ready |
+| **Your app logic** | - | Only sees complete, parsed messages - never touches raw bytes |
+
+#### [OSI Model](https://en.wikipedia.org/wiki/OSI_model):
+
+|   | Layer number | Layer           | Responsibility                                 | Protocol                 |
+|---|--------------|-----------------|------------------------------------------------|--------------------------|
+| 🢂 | **7**        | **Application** | **Data structuring**                           | **HTTP, FTP, DNS, SSH**  |
+|   | 6            | Presentation    | Encoding, encryption, compression              | TLS/SSL, JPEG, ASCII     |
+|   | 5            | Session         | Managing sessions between applications         | NetBIOS, RPC             |
+| 📦 | -           | **`recv_buffer_t`** | **Generic buffer - anchored here only by `recv_buffer_recv()` → `recv()`** | Berkeley Sockets API |
+|   | 4            | Transport       | End-to-end delivery, reliability, ports        | TCP, UDP                 |
+|   | 3            | Network         | Logical addressing, routing between networks   | IP, ICMP, routing        |
+|   | 2            | Data Link       | Node-to-node transfer, MAC addressing, framing | Ethernet, Wi-Fi (802.11) |
+|   | 1            | Physical        | Raw bit transmission over physical medium      | Cables, radio, fiber     |
+
+The buffer has no layer of its own. It sits at this position purely because `recv_buffer_recv()` reads from a socket - swap that one function out and the buffer has no relation to the OSI model at all.
 
 ---
 

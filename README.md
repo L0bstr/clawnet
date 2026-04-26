@@ -2,7 +2,7 @@
 
 ![Linux only](https://badgen.net/badge/Linux/only/D4A017?icon=terminal)
 
-Exploring networking layers in **C** through **client–server** implementations.
+Exploring networking layers in **C** through **client–server** implementation.
 
 ---
 
@@ -14,7 +14,7 @@ works in different layers, written in **C**. <br>
 
 ---
 
-### 📚 Sections 
+### 📚 Sections
 The project is organized into **sections**, each covering a specific concept or layer of abstraction. <br>
 
 ```mermaid

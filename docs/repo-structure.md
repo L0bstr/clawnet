@@ -1,98 +1,146 @@
 [< back](/README.md#-sections)
 
-# Repository Structure
+# Project Structure
+
+## Overview
+
+The project explores and implements network stack layers and abstractions.
+
+- `core/` - all implementations, organized as sections
+- `app/` - a real server and client built from `core/` modules, selectable at runtime via flags
+
+```
+./build/bin/client --http=public-parser@v1
+./build/bin/server --http=own-parser@v1
+```
+
+---
 
 ## Layout
 
 ```
 .
 ├── core/
-│   └── <section>/
-│       └── <version>/   # e.g. core/tcp/v1/
+│   ├── include/
+│   │   └── trawl/
+│   │       ├── http_v1.h       ← API contract for all http/*/v1 modules
+│   │       ├── tcp_v1.h
+│   │       └── ...
+│   └── src/
+│       ├── http/
+│       │   ├── public-parser/
+│       │   │   └── v1/
+│       │   └── own-parser/
+│       │       └── v1/
+│       └── tcp/
+│           └── berkeley/
+│               └── v1/
 └── app/
     ├── server/
     └── client/
 ```
 
-| Path | Purpose |
-|------|---------|
-| `core/` | All section implementations, versioned by folder |
-| `app/` | Consumes `core/` - imports specific section versions |
-
----
-
-## Branches
-
-`main` is the source of truth. Working branches are optional and short-lived. No permanent per-section branches.
-
 ---
 
 ## Sections
 
-A section lives at `core/<name>/` and contains one or more version folders.
+A **section** is a network concept or abstraction (e.g. `http`, `tcp`, `recv_buffer`).
 
-### Versioning
+### Two types of sections
 
-Version names follow [semver](https://semver.org/):
+| Type | Has `vX/` folders | Purpose |
+|------|-------------------|---------|
+| **Parent** | No | Groups related subsections, contains only a `README.md` |
+| **Leaf** | Yes | Actual implementation, exposes an API to `app/` |
 
-| Segment     | Tracked by         | Status                            |
-|-------------|--------------------|-----------------------------------|
-| Major       | Folder (`v{x}/`)   | Stable, permanent, safe as origin |
-| Minor/patch | Git tag (`v{x}.y`) | No folder kep                    |
-
-Major versions are permanent folders (e.g. `v1/`, `v2/`). <br>
-Minor/patch changes are tracked as git tags on main (e.g. `core/http/v1.2`). <br>
-Branches are used during development toward a new major version and deleted after merge to main.
-
-- Each major version folder copies the previous version as starting point
-- A breaking change 🢂 new major version folder (e.g. `v2/`)
-- Each major version defines its fixed refrence manual explicitly (e.g. `refrence.md`)
-
-### Subsections
-
-Subsections are variants of the same concept at different abstraction levels, nested under the parent:
+A parent section exists only when there are multiple implementations of the same concept.
 
 ```
-core/
-  http/
-    parser-lib/ 🢀 variant: use a public parser
+src/
+  http/               ← parent: grouping only
+    public-parser/    ← leaf: implements http using a public lib
       v1/
-    own-parser/ 🢀 variant: implement your own
+    own-parser/       ← leaf: implements http from scratch
       v1/
 ```
 
-Top-level sections are distinct concepts. Subsections are explorations of an existing one.
+A standalone concept with one implementation is just a leaf directly:
+
+```
+src/
+  recv_buffer/        ← leaf directly, no parent needed
+    v1/
+```
+
+---
+
+## API Contract
+
+Every leaf section must expose an API that `app/` can consume.
+
+The contract is defined as a header in `core/include/trawl/`:
+
+- One header per **parent section + major version**: `http_v1.h`, `tcp_v1.h`
+- All sibling leaves at the same version **must implement the same header**
+- `app/` only includes the contract header - never the implementation
+
+This means all `http/*/v1/` modules are interchangeable from `app/`'s perspective.
+
+---
+
+## Versioning
+
+| Segment | Tracked by | Notes |
+|---------|------------|-------|
+| Major | Folder (`v1/`, `v2/`) | Stable, permanent |
+| Minor/patch | Git tag (`v1.2`) | No folder, tagged on main |
+
+- A **breaking change** → new major folder + new contract header version
+- Each major version copies the previous as a starting point
+- Only `v1.0+` may be used as an origin by other sections
+
+### Lifecycle
+```
+1. Implement under v0/ (unstable, no contract required)
+2. Define the contract header
+3. Promote to v1.0 when stable
+```
 
 ---
 
 ## Origins
 
-A section may import another section from `core/` - this is its **origin**.
+A section may build on another section from `core/`. That section is its **origin**.
 
-- Only stable versions (`v1.0+`) may be used
+- Only stable versions (`v1.0+`) may be used as origins
 - Origin updates are manual and opt-in
 
-```mermaid
-stateDiagram-v2
-    direction BT
-
-    state "core/a/v1" as a
-    state "core/b/v1" as b
-    state "core/c/v1" as c
-    state "core/d/v2" as d
-
-    c --> a
-    b --> a
-    d --> c
+```
+http/own-parser/v1  →  tcp/berkeley/v1  →  recv_buffer/v1
 ```
 
 ---
 
-## Lifecycle
+## Future: Cross-Platform Support
+
+Some sections are inherently OS-specific (e.g. `tcp`, platform I/O). Others are pure logic (e.g. `http` parsing)
+and require no changes per platform.
+
+For OS-specific sections, platform support is added as subsections:
 
 ```
-1. Start from a stable origin or scratch
-2. Implement under v0.x
-3. Define refrence manual (refrence.md)
-4. Promote to v1.0 when stable
+src/
+  tcp/
+    linux/
+      v1/
+    windows/
+      v1/
 ```
+
+The build system detects the target OS and selects the correct subsection automatically. Sections with no platform variants
+(like `http`) are untouched.
+
+This means cross-platform support is **additive** - only the OS-specific sections gain new subsections. Nothing else changes.
+
+A `platform/` section would also be introduced to abstract OS-level APIs (`dlopen`, timers, signals etc.), with the same per-OS
+subsection pattern. Everything above it remains portable.

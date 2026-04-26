@@ -1,17 +1,16 @@
 [< back](/README.md#-sections)
 
-## 🔌 TCP connections
+## 🔌 Berkeley sockets
 
 ### 🧠 Overview
 This section implements **low-level networking** via the
 [The Berkeley Sockets API](https://csperkins.org/teaching/2007-2008/networked-systems/lecture04.pdf). <br>
 It focuses on the **TCP socket creation, binding, and connection management** at the **Transport Layer**. <br>
-To keep the focus on the **raw connection**, **no application-layer protocols** (like HTTP) are used. <br>
 
 ---
 
 ### 🎯 Purpose
-Build and configure the server and client endpoints to handle raw connections.
+Setup server to listen and accept connections, and setup the client to be able the initiate and talk to the server.
 
 ---
 
