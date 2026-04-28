@@ -1,4 +1,4 @@
-[< back](/README.md#-about)
+[< back](/README.md)
 
 # Project Structure
 

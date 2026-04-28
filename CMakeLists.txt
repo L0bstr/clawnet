@@ -4,42 +4,24 @@ project(trawl C)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_C_STANDARD 11)
 
-# Static core library
-set(LIB "trawl_lib")
-file(GLOB_RECURSE LIB_SRC CONFIGURE_DEPENDS "core/src/*.c")
-file(GLOB_RECURSE VENDOR_SRC CONFIGURE_DEPENDS "vendor/*.c")
-file(GLOB_RECURSE VENDOR_INCLUDES CONFIGURE_DEPENDS "vendor/*/include")
-add_library(${LIB} STATIC 
-   ${LIB_SRC}
-   ${VENDOR_SRC}
-)
-target_include_directories(${LIB} PUBLIC "core/include")
-target_include_directories(${LIB} PUBLIC ${VENDOR_INCLUDES})
+file(GLOB SECTION_DIRS "sections/*/CMakeLists.txt" "sections/*/*/CMakeLists.txt")
+foreach(section_cmake ${SECTION_DIRS})
+   get_filename_component(section_dir ${section_cmake} DIRECTORY)
+   get_filename_component(section_parent ${section_dir} DIRECTORY)
+   file(RELATIVE_PATH rel ${CMAKE_SOURCE_DIR}/sections ${section_parent})
 
-## Remove name prefixes
-set_target_properties(${LIB} PROPERTIES 
-    PREFIX ""
-    IMPORT_PREFIX ""
-    OUTPUT_NAME "${LIB}"
-)
+    # Single-config output path
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${rel}")
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${rel}")
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${rel}")
 
-# Client
-set(CLIENT "trawl")
-file(GLOB_RECURSE CLIENT_SRC CONFIGURE_DEPENDS "app/client/*.c")
-add_executable(${CLIENT} ${CLIENT_SRC})
-target_link_libraries(${CLIENT} PRIVATE ${LIB})
+    # Multi-config output path
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin/${rel}")
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/lib/${rel}")
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/lib/${rel}")
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/bin/${rel}")
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/lib/${rel}")
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/lib/${rel}")
 
-# Server
-set(SERVER "trawld")
-file(GLOB_RECURSE SERVER_SRC CONFIGURE_DEPENDS "app/server/*.c")
-add_executable(${SERVER} ${SERVER_SRC})
-target_link_libraries(${SERVER} PRIVATE ${LIB})
-
-# Single-config output directories
-foreach(target ${CLIENT} ${SERVER} ${LIB})
-   set_target_properties(${target} PROPERTIES 
-      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bin"
-      LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/lib"
-      ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/lib"
-   )
+    add_subdirectory(${section_dir})
 endforeach()
