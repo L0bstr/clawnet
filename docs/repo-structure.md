@@ -1,146 +1,100 @@
-[< back](/README.md#-sections)
+[< back](/README.md#-about)
 
 # Project Structure
-
-## Overview
-
-The project explores and implements network stack layers and abstractions.
-
-- `core/` - all implementations, organized as sections
-- `app/` - a real server and client built from `core/` modules, selectable at runtime via flags
-
-```
-./build/bin/client --http=public-parser@v1
-./build/bin/server --http=own-parser@v1
-```
-
----
 
 ## Layout
 
 ```
 .
-├── core/
-│   ├── include/
-│   │   └── trawl/
-│   │       ├── http_v1.h       ← API contract for all http/*/v1 modules
-│   │       ├── tcp_v1.h
-│   │       └── ...
-│   └── src/
-│       ├── http/
-│       │   ├── public-parser/
-│       │   │   └── v1/
-│       │   └── own-parser/
-│       │       └── v1/
-│       └── tcp/
-│           └── berkeley/
-│               └── v1/
-└── app/
-    ├── server/
-    └── client/
+├── sections/
+│   ├── tcp/                        ← leaf
+│   │   ├── app/
+│   │   │   ├── client/
+│   │   │   └── server/
+│   │   ├── core/
+│   │   └── CMakeLists.txt
+│   ├── http/                       ← parent
+│   │   ├── public-parser/          ← leaf
+│   │   │   ├── app/
+│   │   │   │   ├── client/
+│   │   │   │   └── server/
+│   │   │   ├── core/
+│   │   │   ├── resources/
+│   │   │   └── CMakeLists.txt
+│   │   └── own-parser/             ← leaf
+│   │       ├── app/
+│   │       │   ├── client/
+│   │       │   └── server/
+│   │       ├── core/
+│   │       ├── resources/
+│   │       └── CMakeLists.txt
+│   └── .../
+├── docs/
+│   ├── sections/
+│   │   ├── tcp.md
+│   │   ├── http/
+│   │   │   ├── README.md
+│   │   │   ├── public-parser.md
+│   │   │   └── own-parser.md
+│   │   └── .../
+│   ├── repo-structure.md
+│   └── section-template.md
+├── vendor/
+│   └── picohttpparser/
+├── CMakeLists.txt
+└── README.md
 ```
 
 ---
 
 ## Sections
 
-A **section** is a network concept or abstraction (e.g. `http`, `tcp`, `recv_buffer`).
+A **section** is either a **leaf** or a **parent**.
 
-### Two types of sections
+| Type | Has code | Description |
+|------|----------|-------------|
+| Leaf | Yes | A single implementation of a concept |
+| Parent | No | Groups multiple leaf implementations of the same concept |
 
-| Type | Has `vX/` folders | Purpose |
-|------|-------------------|---------|
-| **Parent** | No | Groups related subsections, contains only a `README.md` |
-| **Leaf** | Yes | Actual implementation, exposes an API to `app/` |
+Leaf folders: `core/`, `app/`, optional `resources/`, `CMakeLists.txt`, and a corresponding doc under `docs/sections/`.
 
-A parent section exists only when there are multiple implementations of the same concept.
+`resources/` holds static files served or used at runtime (e.g. HTML pages, assets). Only present when a section needs it.
 
-```
-src/
-  http/               ← parent: grouping only
-    public-parser/    ← leaf: implements http using a public lib
-      v1/
-    own-parser/       ← leaf: implements http from scratch
-      v1/
-```
-
-A standalone concept with one implementation is just a leaf directly:
-
-```
-src/
-  recv_buffer/        ← leaf directly, no parent needed
-    v1/
-```
+Sections depend only on OS-provided APIs and `vendor/`. They do not depend on each other.
 
 ---
 
-## API Contract
+## vendor/
 
-Every leaf section must expose an API that `app/` can consume.
+Shared across all sections. Sections reference vendor libs directly from the top-level `vendor/`.
 
-The contract is defined as a header in `core/include/trawl/`:
+Own utilities shared between sections are duplicated per section. If duplication becomes painful, a `sections/shared/` will be introduced.
 
-- One header per **parent section + major version**: `http_v1.h`, `tcp_v1.h`
-- All sibling leaves at the same version **must implement the same header**
-- `app/` only includes the contract header - never the implementation
+---
 
-This means all `http/*/v1/` modules are interchangeable from `app/`'s perspective.
+## Build System
+
+The top-level `CMakeLists.txt` uses `add_subdirectory()` to load each leaf section. Each leaf's `CMakeLists.txt` defines its own targets and links against `vendor/` as needed.
+
+Default build compiles everything. To target a specific section:
+
+```bash
+cmake --build . -t tcp
+cmake --build . -t http-public-parser
+cmake --build . -t http-own-parser
+cmake --build . -t http              # builds all leaves under http
+```
+
+Parent sections are grouping targets only — they aggregate their leaves but produce no binaries themselves.
 
 ---
 
 ## Versioning
 
-| Segment | Tracked by | Notes |
-|---------|------------|-------|
-| Major | Folder (`v1/`, `v2/`) | Stable, permanent |
-| Minor/patch | Git tag (`v1.2`) | No folder, tagged on main |
+No versioned folders. Section history is tracked by git:
 
-- A **breaking change** → new major folder + new contract header version
-- Each major version copies the previous as a starting point
-- Only `v1.0+` may be used as an origin by other sections
-
-### Lifecycle
-```
-1. Implement under v0/ (unstable, no contract required)
-2. Define the contract header
-3. Promote to v1.0 when stable
+```bash
+git log sections/tcp/
 ```
 
----
-
-## Origins
-
-A section may build on another section from `core/`. That section is its **origin**.
-
-- Only stable versions (`v1.0+`) may be used as origins
-- Origin updates are manual and opt-in
-
-```
-http/own-parser/v1  →  tcp/berkeley/v1  →  recv_buffer/v1
-```
-
----
-
-## Future: Cross-Platform Support
-
-Some sections are inherently OS-specific (e.g. `tcp`, platform I/O). Others are pure logic (e.g. `http` parsing)
-and require no changes per platform.
-
-For OS-specific sections, platform support is added as subsections:
-
-```
-src/
-  tcp/
-    linux/
-      v1/
-    windows/
-      v1/
-```
-
-The build system detects the target OS and selects the correct subsection automatically. Sections with no platform variants
-(like `http`) are untouched.
-
-This means cross-platform support is **additive** - only the OS-specific sections gain new subsections. Nothing else changes.
-
-A `platform/` section would also be introduced to abstract OS-level APIs (`dlopen`, timers, signals etc.), with the same per-OS
-subsection pattern. Everything above it remains portable.
+Git tags mark stable milestones.
