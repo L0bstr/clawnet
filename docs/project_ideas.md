@@ -1,6 +1,7 @@
 # Ideas
 
 - [ ] Cross-platform layer in `shared/`
+- [ ] AN ACTUALLY GOOD PROJET NAME
 
 # Links
 
