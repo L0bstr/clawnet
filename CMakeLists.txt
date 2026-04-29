@@ -4,7 +4,12 @@ project(trawl C)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_C_STANDARD 11)
 
+# shared is loaded separately - its libs output to lib/shared instead of lib/<section>
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/shared)
+add_subdirectory(sections/shared)
+
 file(GLOB SECTION_DIRS "sections/*/CMakeLists.txt" "sections/*/*/CMakeLists.txt")
+list(FILTER SECTION_DIRS EXCLUDE REGEX ".*/shared/CMakeLists.txt")
 foreach(section_cmake ${SECTION_DIRS})
    get_filename_component(section_dir ${section_cmake} DIRECTORY)
    get_filename_component(section_parent ${section_dir} DIRECTORY)

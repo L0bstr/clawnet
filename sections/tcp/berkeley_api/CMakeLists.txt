@@ -10,6 +10,7 @@ set_target_properties(${SECTION}_lib PROPERTIES
     OUTPUT_NAME "${SECTION}_lib"
 )
 
+target_link_libraries(${SECTION}_lib PUBLIC "recv_buffer_lib")
 target_include_directories(${SECTION}_lib PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/core/include")
 
 # App
